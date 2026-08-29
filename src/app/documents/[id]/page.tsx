@@ -44,6 +44,7 @@ export default async function DocumentPage({
 
   return (
     <WorkspaceTabs
+      key={doc.id}
       docId={doc.id}
       docName={doc.name}
       datasetId={dataset?.id ?? null}

@@ -1,6 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import 'react-data-grid/lib/styles.css'
 import DataGrid, { type Column, type RowsChangeData } from 'react-data-grid'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,6 +32,7 @@ export default function TableSection({
       key: '__num',
       name: t.grid.rowNumberColumn,
       width: 56,
+      frozen: true,
       editable: false,
       cellClass: 'text-muted-foreground',
     }
@@ -136,6 +138,10 @@ export default function TableSection({
   }
 
   useEffect(() => {
+    setSelectedIds(new Set())
+  }, [datasetId])
+
+  useEffect(() => {
     function onFocusRow(e: Event) {
       const num = (e as CustomEvent<{ num: number }>).detail?.num
       if (typeof num !== 'number') return
@@ -176,7 +182,7 @@ export default function TableSection({
           + {t.grid.addColumn}
         </Button>
         <Button size="sm" variant="outline" onClick={removeSelected} disabled={selectedIds.size === 0}>
-          − Remove selected ({selectedIds.size})
+          âˆ’ Remove selected ({selectedIds.size})
         </Button>
       </div>
 
@@ -192,7 +198,7 @@ export default function TableSection({
               onClick={() => removeColumn(c.id)}
               aria-label={`Remove ${c.name}`}
             >
-              ×
+              Ã—
             </button>
           </span>
         ))}

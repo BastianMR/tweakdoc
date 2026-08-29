@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import NewDocumentDialog from './newDocumentDialog'
@@ -15,6 +15,7 @@ export interface DocumentListItem {
 
 export function SidebarClient({ docs }: { docs: DocumentListItem[] }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [query, setQuery] = useState('')
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
@@ -75,8 +76,16 @@ export function SidebarClient({ docs }: { docs: DocumentListItem[] }) {
                     className="h-7 text-sm"
                   />
                 ) : (
-                  <div className="flex items-center justify-between rounded-md px-2 py-1 hover:bg-accent">
-                    <Link href={`/documents/${doc.id}`} className="min-w-0 flex-1 truncate text-sm">
+                  <div
+                    className={`flex items-center justify-between rounded-md px-2 py-1 ${
+                      pathname === `/documents/${doc.id}` ? 'bg-accent font-medium' : 'hover:bg-accent'
+                    }`}
+                  >
+                    <Link
+                      href={`/documents/${doc.id}`}
+                      prefetch
+                      className="min-w-0 flex-1 truncate text-sm"
+                    >
                       {doc.name}
                     </Link>
                     <span className="ml-1 hidden shrink-0 gap-1 group-hover:flex">

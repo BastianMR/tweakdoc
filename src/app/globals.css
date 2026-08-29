@@ -145,3 +145,29 @@
   border-color: #fca5a5;
   text-decoration: underline wavy #ef4444;
 }
+
+/* react-data-grid theming (shadcn tokens) */
+.rdg {
+  --rdg-border-color: hsl(var(--border));
+  --rdg-header-background-color: hsl(var(--muted) / 0.6);
+  --rdg-row-hover-background-color: hsl(var(--accent) / 0.5);
+  --rdg-selection-color: hsl(var(--ring));
+  --rdg-font-size: 13px;
+  border-color: hsl(var(--border));
+  border-radius: 8px;
+  overflow: hidden;
+}
+.rdg .rdg-header-row .rdg-cell {
+  font-weight: 600;
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+}
+.rdg .rdg-cell {
+  border-color: hsl(var(--border));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rdg .rdg-row[aria-selected='true'] {
+  background: hsl(var(--accent) / 0.35);
+}
