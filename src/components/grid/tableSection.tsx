@@ -198,7 +198,7 @@ export default function TableSection({
               onClick={() => removeColumn(c.id)}
               aria-label={`Remove ${c.name}`}
             >
-              Ã—
+              ×
             </button>
           </span>
         ))}

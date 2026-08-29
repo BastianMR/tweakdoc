@@ -1,4 +1,4 @@
-﻿export type SpellLangState = SpellLang
+export type SpellLangState = SpellLang
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -74,7 +74,7 @@ function highlightInDom(dom: HTMLElement, words: Set<string>) {
   let current = walker.nextNode() as Text | null
   while (current) {
     const text = current.textContent ?? ''
-    const re = /[A-Za-zÃÃ‰ÃÃ“ÃšÃ‘Ã¡Ã©Ã­Ã³ÃºÃ±Ã¼Ãœ]+/g
+    const re = /[A-Za-z\u00C0-\u024F]+/g
     let m: RegExpExecArray | null
     while ((m = re.exec(text))) {
       if (words.has(m[0])) {

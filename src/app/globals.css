@@ -171,3 +171,12 @@
 .rdg .rdg-row[aria-selected='true'] {
   background: hsl(var(--accent) / 0.35);
 }
+
+/* editor placeholder + slash helpers */
+.variable-doc p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: hsl(var(--muted-foreground) / 0.7);
+}

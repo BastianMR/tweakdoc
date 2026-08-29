@@ -1,7 +1,8 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import { EditorContent, type Editor } from '@tiptap/react'
+import { EditorStatusBar, EditorToolbar } from './editorSurface'
 import type { StyleSettings } from '@/lib/styleTokens'
 
 const MM_TO_PX = 96 / 25.4
@@ -14,9 +15,11 @@ const PAGE_SIZE_MM: Record<'A4' | 'Letter', { w: number; h: number }> = {
 export default function PageCanvas({
   editor,
   settings,
+  saving,
 }: {
   editor: Editor
   settings: StyleSettings
+  saving?: 'idle' | 'saving' | 'saved'
 }) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [breaks, setBreaks] = useState<number[]>([])
@@ -83,61 +86,67 @@ export default function PageCanvas({
   const pageCount = breaks.length + 1
 
   return (
-    <div className="flex-1 overflow-auto bg-zinc-200/70 p-6">
-      <div
-        className="relative mx-auto bg-white shadow-lg ring-1 ring-black/10"
-        style={{
-          width: sheetWidthPx,
-          minHeight: sheetHeightPx,
-          paddingTop: marginPx.top,
-          paddingRight: marginPx.right,
-          paddingBottom: marginPx.bottom,
-          paddingLeft: marginPx.left,
-          boxSizing: 'border-box',
-        }}
-      >
-        <div ref={contentRef} className="relative">
-          <EditorContent editor={editor} />
+    <div className="flex h-full flex-col">
+      <EditorToolbar editor={editor} />
 
-          {breaks.map((y, i) => (
-            <div
-              key={`${y}-${i}`}
-              className="pointer-events-none absolute left-0 right-0"
-              style={{ top: y }}
-            >
-              <div className="flex items-center gap-2">
-                <span className="rounded bg-zinc-300/90 px-1.5 py-0.5 text-[10px] text-zinc-600">
-                  Page {i + 2}
-                </span>
-                <div className="h-0 flex-1 border-t-2 border-dashed border-blue-300" />
-              </div>
-            </div>
-          ))}
-        </div>
-
+      <div className="flex-1 overflow-auto bg-zinc-200/70 p-6">
         <div
-          className="pointer-events-none absolute"
+          className="relative mx-auto bg-white shadow-lg ring-1 ring-black/10"
           style={{
-            top: marginPx.top,
-            left: marginPx.left,
-            right: marginPx.right,
-            bottom: marginPx.bottom,
-            borderLeft: '2px dashed rgb(147 197 253 / 0.5)',
-            borderRight: '2px dashed rgb(147 197 253 / 0.5)',
+            width: sheetWidthPx,
+            minHeight: sheetHeightPx,
+            paddingTop: marginPx.top,
+            paddingRight: marginPx.right,
+            paddingBottom: marginPx.bottom,
+            paddingLeft: marginPx.left,
+            boxSizing: 'border-box',
           }}
-        />
+        >
+          <div ref={contentRef} className="relative">
+            <EditorContent editor={editor} />
 
-        {settings.header.enabled && settings.header.logoPath && (
-          <div className="pointer-events-none absolute left-0 right-0 top-2 flex justify-end pr-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={settings.header.logoPath} alt="" className="max-h-14 object-contain" />
+            {breaks.map((y, i) => (
+              <div
+                key={`${y}-${i}`}
+                className="pointer-events-none absolute left-0 right-0"
+                style={{ top: y }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="rounded bg-zinc-300/90 px-1.5 py-0.5 text-[10px] text-zinc-600">
+                    Page {i + 2}
+                  </span>
+                  <div className="h-0 flex-1 border-t-2 border-dashed border-blue-300" />
+                </div>
+              </div>
+            ))}
           </div>
-        )}
 
-        <div className="pointer-events-none absolute -bottom-6 left-0 right-0 text-center text-[10px] text-zinc-500">
-          {settings.page.size} · Page 1–{pageCount}
+          <div
+            className="pointer-events-none absolute"
+            style={{
+              top: marginPx.top,
+              left: marginPx.left,
+              right: marginPx.right,
+              bottom: marginPx.bottom,
+              borderLeft: '2px dashed rgb(147 197 253 / 0.5)',
+              borderRight: '2px dashed rgb(147 197 253 / 0.5)',
+            }}
+          />
+
+          {settings.header.enabled && settings.header.logoPath && (
+            <div className="pointer-events-none absolute left-0 right-0 top-2 flex justify-end pr-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={settings.header.logoPath} alt="" className="max-h-14 object-contain" />
+            </div>
+          )}
+
+          <div className="pointer-events-none absolute -bottom-6 left-0 right-0 text-center text-[10px] text-zinc-500">
+            {settings.page.size} · Page 1–{pageCount}
+          </div>
         </div>
       </div>
+
+      <EditorStatusBar editor={editor} saving={saving} />
     </div>
   )
 }

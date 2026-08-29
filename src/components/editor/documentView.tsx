@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEditor } from '@tiptap/react'
@@ -16,6 +16,18 @@ import {
 } from './qualityPanels'
 import VariableField, { type ColumnRef } from './variableField'
 import { styleTokensToCss, type StyleSettings } from '@/lib/styleTokens'
+import { BubbleMenu } from '@tiptap/react/menus'
+import Placeholder from '@tiptap/extension-placeholder'
+import CharacterCount from '@tiptap/extension-character-count'
+import TextAlign from '@tiptap/extension-text-align'
+import { TextStyle } from '@tiptap/extension-text-style'
+import FontFamily from '@tiptap/extension-font-family'
+import { Table } from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableHeader from '@tiptap/extension-table-header'
+import TableCell from '@tiptap/extension-table-cell'
+import { SlashMenu, setSlashColumns } from './slashMenu'
+import SlashPopup, { useSlashPopup } from './slashPopup'
 
 interface DocumentViewProps {
   documentId: string
@@ -41,11 +53,12 @@ export default function DocumentView({
   settings,
 }: DocumentViewProps) {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const spellTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const columnsRef = useRef(columns)
   columnsRef.current = columns
 
   const [lang, setLang] = useState<SpellLangState>('auto')
+  const [saving, setSaving] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [rightPanel, setRightPanel] = useState<'none' | 'spell' | 'ai'>('none')
   const [reviewing, setReviewing] = useState(false)
   const [observations, setObservations] = useState<
@@ -54,10 +67,28 @@ export default function DocumentView({
 
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [StarterKit.configure({ heading: { levels: [1, 2, 3] } }), VariableField],
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
+        link: { openOnClick: false },
+      }),
+      VariableField,
+      Placeholder.configure({
+        placeholder: 'Type / for commands or drag a field from the left…',
+      }),
+      CharacterCount,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      TextStyle,
+      FontFamily,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      SlashMenu,
+    ],
     content: initialContent,
     editorProps: {
-      attributes: { class: 'variable-doc min-h-[400px] px-8 py-6 focus:outline-none' },
+      attributes: { class: 'variable-doc min-h-[400px] focus:outline-none' },
       handleDrop: (_view, event) => {
         const dragEvent = event as DragEvent
         const raw = dragEvent.dataTransfer?.getData('text/x-tweakdoc-variable')
@@ -83,18 +114,36 @@ export default function DocumentView({
       editor.commands.refreshVariableFieldBindings(columnsRef.current)
       if (saveTimer.current) clearTimeout(saveTimer.current)
       saveTimer.current = setTimeout(() => {
+        setSaving('saving')
         void fetch(`/api/documents/${documentId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ contentHtml: editor.getHTML() }),
+        }).then(() => {
+          setSaving('saved')
+          if (savedTimer.current) clearTimeout(savedTimer.current)
+          savedTimer.current = setTimeout(() => setSaving('idle'), 1500)
         })
       }, 600)
     },
   })
 
+  const { state: slashState, indexRef: slashIndex, select: slashSelect } = useSlashPopup(editor)
+
   useEffect(() => {
     if (editor) editor.commands.refreshVariableFieldBindings(columns)
   }, [editor, columns])
+
+  useEffect(() => {
+    setSlashColumns(() => columnsRef.current)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current)
+      if (savedTimer.current) clearTimeout(savedTimer.current)
+    }
+  }, [])
 
   function handleInsert(col: ColumnRef) {
     if (!editor) return
@@ -105,7 +154,6 @@ export default function DocumentView({
   function applyReplacement(original: string, suggestion: string) {
     if (!editor) return
     replaceEverywhere(editor, original, suggestion)
-    if (spellTimer.current) clearTimeout(spellTimer.current)
   }
 
   async function runAiReview() {
@@ -137,7 +185,7 @@ export default function DocumentView({
       <div className="flex flex-1 flex-col overflow-hidden">
         <SpellToolbar lang={lang} onLangChange={setLang} issueCount={0}>
           <Button size="sm" variant="outline" onClick={() => void runAiReview()} disabled={reviewing}>
-            {reviewing ? 'â€¦' : 'âœ¨ Review with AI'}
+            {reviewing ? 'Reviewing…' : '✨ Review with AI'}
           </Button>
           <Button
             size="sm"
@@ -150,9 +198,9 @@ export default function DocumentView({
         <div className="flex min-h-0 flex-1">
           <div className="flex-1 overflow-hidden bg-white">
             {editor ? (
-              <PageCanvas editor={editor} settings={settings} />
+              <PageCanvas editor={editor} settings={settings} saving={saving} />
             ) : (
-              <div className="p-8 text-sm text-muted-foreground">Loading editorâ€¦</div>
+              <div className="p-8 text-sm text-muted-foreground">Loading editor…</div>
             )}
           </div>
           {rightPanel !== 'none' && (
@@ -164,12 +212,12 @@ export default function DocumentView({
                   {observations.length === 0 && !reviewing && (
                     <li className="p-3 text-muted-foreground">No writing issues found</li>
                   )}
-                  {reviewing && <li className="p-3 text-muted-foreground">Reviewingâ€¦</li>}
+                  {reviewing && <li className="p-3 text-muted-foreground">Reviewing…</li>}
                   {observations.map((o, i) => (
                     <li key={`${i}-${o.original}`} className="space-y-1 px-2 py-2">
                       <div>
                         <span className="text-destructive line-through">{o.original}</span>
-                        {' â†’ '}
+                        {' → '}
                         <span className="font-medium">{o.suggestion}</span>
                       </div>
                       <div className="text-muted-foreground">{o.reason}</div>
@@ -200,6 +248,51 @@ export default function DocumentView({
           )}
         </div>
       </div>
+
+      {editor && (
+        <BubbleMenu editor={editor} options={{ placement: 'top', offset: 8 }}>
+          <div className="flex items-center gap-0.5 rounded-lg border bg-popover p-1 shadow-xl">
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().toggleBold().run()}>
+              <b>B</b>
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().toggleItalic().run()}>
+              <i>I</i>
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().toggleUnderline().run()}>
+              <u>U</u>
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().toggleStrike().run()}>
+              <s>S</s>
+            </Button>
+            <span className="mx-0.5 h-4 w-px bg-border" />
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().setTextAlign('left').run()}>
+              ⇤
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().setTextAlign('center').run()}>
+              ↔
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 px-2" onClick={() => editor.chain().focus().setTextAlign('right').run()}>
+              ⇥
+            </Button>
+            <span className="mx-0.5 h-4 w-px bg-border" />
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 px-2"
+              onClick={() => {
+                const url = window.prompt('Link URL')
+                if (url === null) return
+                if (url === '') editor.chain().focus().unsetLink().run()
+                else editor.chain().focus().setLink({ href: url }).run()
+              }}
+            >
+              🔗
+            </Button>
+          </div>
+        </BubbleMenu>
+      )}
+
+      <SlashPopup state={slashState} indexRef={slashIndex} onSelect={slashSelect} />
     </div>
   )
 }
