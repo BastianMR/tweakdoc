@@ -1,0 +1,55 @@
+# --- Dependencies ---
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.egg-info/
+
+# --- Build output ---
+dist/
+build/
+out/
+target/
+*.tsbuildinfo
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Logs & caches ---
+*.log
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.nyc_output/
+coverage/
+.coverage
+
+# --- OS & editors ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# tweakdoc local data
+data/
+*.db
+*.db-wal
+*.db-shm
+next-env.d.ts
+
+# tooling artifacts
+graphify-out/
+dev-server.log
+prod-server.log
+e2e-results.json
+
+# next build
+.next/
+# drizzle push meta
+drizzle/
