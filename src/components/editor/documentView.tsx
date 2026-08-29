@@ -1,11 +1,11 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import EditorSurface from './editorSurface'
+import PageCanvas from './pageCanvas'
 import FieldsPanel from './fieldsPanel'
 import {
   SpellToolbar,
@@ -137,7 +137,7 @@ export default function DocumentView({
       <div className="flex flex-1 flex-col overflow-hidden">
         <SpellToolbar lang={lang} onLangChange={setLang} issueCount={0}>
           <Button size="sm" variant="outline" onClick={() => void runAiReview()} disabled={reviewing}>
-            {reviewing ? '…' : '✨ Review with AI'}
+            {reviewing ? 'â€¦' : 'âœ¨ Review with AI'}
           </Button>
           <Button
             size="sm"
@@ -150,9 +150,9 @@ export default function DocumentView({
         <div className="flex min-h-0 flex-1">
           <div className="flex-1 overflow-hidden bg-white">
             {editor ? (
-              <EditorSurface editor={editor} />
+              <PageCanvas editor={editor} settings={settings} />
             ) : (
-              <div className="p-8 text-sm text-muted-foreground">Loading editor…</div>
+              <div className="p-8 text-sm text-muted-foreground">Loading editorâ€¦</div>
             )}
           </div>
           {rightPanel !== 'none' && (
@@ -164,12 +164,12 @@ export default function DocumentView({
                   {observations.length === 0 && !reviewing && (
                     <li className="p-3 text-muted-foreground">No writing issues found</li>
                   )}
-                  {reviewing && <li className="p-3 text-muted-foreground">Reviewing…</li>}
+                  {reviewing && <li className="p-3 text-muted-foreground">Reviewingâ€¦</li>}
                   {observations.map((o, i) => (
                     <li key={`${i}-${o.original}`} className="space-y-1 px-2 py-2">
                       <div>
                         <span className="text-destructive line-through">{o.original}</span>
-                        {' → '}
+                        {' â†’ '}
                         <span className="font-medium">{o.suggestion}</span>
                       </div>
                       <div className="text-muted-foreground">{o.reason}</div>
