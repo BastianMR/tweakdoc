@@ -132,11 +132,8 @@ export default function DocumentView({
 
   useEffect(() => {
     if (editor) editor.commands.refreshVariableFieldBindings(columns)
-  }, [editor, columns])
-
-  useEffect(() => {
     setSlashColumns(() => columnsRef.current)
-  }, [])
+  }, [editor, columns])
 
   useEffect(() => {
     return () => {

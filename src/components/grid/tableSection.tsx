@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import ImportDialog from './importDialog'
@@ -9,17 +9,25 @@ import SheetGrid from './sheetGrid'
 import { useDataset } from './useDataset'
 import { t } from '@/lib/i18n/en'
 import type { Sheet } from '@/lib/tableOps'
+import type { ColumnRef } from '@/components/editor/variableField'
 
 export default function TableSection({
   datasetId,
   documentId,
+  onColumnsChange,
 }: {
   datasetId: string | null
   documentId: string
+  onColumnsChange?: (cols: ColumnRef[]) => void
 }) {
   const dataset = useDataset(datasetId)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [invalidCells, setInvalidCells] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (dataset.sheet.columns.length === 0) return
+    onColumnsChange?.(dataset.sheet.columns.map(({ id, name }) => ({ id, name })))
+  }, [dataset.sheet.columns, onColumnsChange])
 
   const onSheet = useCallback(
     (next: Sheet, nextRowNumber?: number) => {

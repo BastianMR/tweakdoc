@@ -30,6 +30,7 @@ export default function WorkspaceTabs({
 }: WorkspaceTabsProps) {
   const [tab, setTab] = useState('document')
   const [settings, setSettings] = useState<StyleSettings>(initialSettings)
+  const [cols, setCols] = useState<ColumnRef[]>(columns)
 
   function handleGoToRow(num: number) {
     setTab('table')
@@ -55,13 +56,17 @@ export default function WorkspaceTabs({
         <DocumentView
           documentId={docId}
           initialContent={initialContent}
-          columns={columns}
+          columns={cols}
           settings={settings}
         />
       </TabsContent>
       <TabsContent value="table" className="flex-1 overflow-hidden">
         {datasetId ? (
-          <TableSection datasetId={datasetId} documentId={docId} />
+          <TableSection
+            datasetId={datasetId}
+            documentId={docId}
+            onColumnsChange={setCols}
+          />
         ) : (
           <p className="p-6 text-sm text-muted-foreground">No table linked to this document.</p>
         )}

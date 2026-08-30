@@ -95,8 +95,8 @@ const VariableField = Node.create({
       refreshVariableFieldBindings:
         (columns) =>
         ({ tr, state }) => {
-          const byName = new Map(columns.map((c) => [c.name, c.id]))
-          const knownIds = new Set(columns.map((c) => c.id))
+          const byId = new Map(columns.map((c) => [c.id, c]))
+          const byName = new Map(columns.map((c) => [c.name, c]))
           let changed = false
 
           state.doc.descendants((node, pos) => {
@@ -106,12 +106,13 @@ const VariableField = Node.create({
               variableName: string
             }
 
-            const resolvedId = byName.get(variableName)
-            if (resolvedId) {
-              if (variableId !== resolvedId || node.attrs.unbound) {
+            // Bound chip: follow the column's current name (Notion-style rename)
+            const bound = variableId ? byId.get(variableId) : undefined
+            if (bound) {
+              if (variableName !== bound.name || node.attrs.unbound) {
                 tr.setNodeMarkup(pos, undefined, {
                   ...node.attrs,
-                  variableId: resolvedId,
+                  variableName: bound.name,
                   unbound: false,
                 })
                 changed = true
@@ -119,9 +120,15 @@ const VariableField = Node.create({
               return
             }
 
-            if (variableId && knownIds.has(variableId)) {
-              if (node.attrs.unbound) {
-                tr.setNodeMarkup(pos, undefined, { ...node.attrs, unbound: false })
+            // Hand-typed {{name}} chip: bind it to the matching column
+            const resolved = byName.get(variableName)
+            if (resolved) {
+              if (variableId !== resolved.id || node.attrs.unbound) {
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  variableId: resolved.id,
+                  unbound: false,
+                })
                 changed = true
               }
               return
