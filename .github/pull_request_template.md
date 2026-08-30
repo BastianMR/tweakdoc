@@ -1,13 +1,16 @@
-## Summary
+## Qué cambia
 
-<!-- What does this PR change and why? -->
+<!-- Descripción breve del cambio y por qué. -->
 
-## Changes
+Closes #
 
--
+## Cómo probar
 
-## Checklist
+<!-- Pasos para verificar el cambio localmente. -->
 
-- [ ] Tests pass locally
-- [ ] Lint passes
-- [ ] Documentation / CHANGELOG updated (if needed)
+## Checklist DoD
+
+- [ ] Lint + typecheck OK (si aplica)
+- [ ] Tests OK (si aplica)
+- [ ] Probado localmente
+- [ ] Issue vinculado (`Closes #N`)
