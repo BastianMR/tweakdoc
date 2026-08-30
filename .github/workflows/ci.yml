@@ -1,29 +1,34 @@
+# CI de tweakdoc — corre en cada push a main y en cada pull request.
+# Si un step falla, el check del PR queda rojo y debiera resolverse antes de mergear.
+# Se ve y se ejecuta en el tab "Actions" del repo.
 name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
+    branches: [main] # dispara en cada push directo a main
+  pull_request: # dispara en cada PR abierto o actualizado, de cualquier rama
 
 jobs:
-  lint-typecheck-test:
+  quality: # un job = un grupo de steps sobre una máquina limpia (ubuntu)
     runs-on: ubuntu-latest
     steps:
+      # 1. Clona el repo en el runner
       - uses: actions/checkout@v4
 
+      # 2. Instala Node 22 y activa caché de dependencias npm (acelera las corridas siguientes)
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+      # 3. Instala dependencias EXACTAS según package-lock.json (reproducible)
+      - run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      # 4. Calidad de código: lint y tipos
+      - run: npm run lint
+      - run: npm run typecheck
 
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
+      # 5. Tests unitarios (vitest).
+      #    Nota: no corremos `next build` todavía porque puede requerir DATABASE_URL.
+      #    Cuando quieras agregarlo: - run: npm run build  (con el secret correspondiente)
+      - run: npm test
