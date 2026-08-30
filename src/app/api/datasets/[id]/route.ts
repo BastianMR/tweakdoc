@@ -48,7 +48,7 @@ export async function PUT(request: Request, { params }: Ctx) {
 
   if (
     body?.expectedNextRowNumber !== undefined &&
-    body.expectedNextRowNumber !== existing.nextRowNumber
+    body.expectedNextRowNumber < existing.nextRowNumber
   ) {
     return NextResponse.json(
       { error: 'conflict', currentNextRowNumber: existing.nextRowNumber },

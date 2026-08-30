@@ -146,33 +146,26 @@
   text-decoration: underline wavy #ef4444;
 }
 
-/* react-data-grid theming (shadcn tokens) */
-.rdg {
-  --rdg-border-color: hsl(var(--border));
-  --rdg-header-background-color: hsl(var(--muted) / 0.6);
-  --rdg-row-hover-background-color: hsl(var(--accent) / 0.5);
-  --rdg-selection-color: hsl(var(--ring));
-  --rdg-font-size: 13px;
-  border-color: hsl(var(--border));
-  border-radius: 8px;
-  overflow: hidden;
-}
-.rdg .rdg-header-row .rdg-cell {
-  font-weight: 600;
-  font-size: 12px;
-  color: hsl(var(--muted-foreground));
-}
-.rdg .rdg-cell {
-  border-color: hsl(var(--border));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.rdg .rdg-row[aria-selected='true'] {
-  background: hsl(var(--accent) / 0.35);
-}
-
-/* editor placeholder + slash helpers */
+/* sheetgrid theming */
+.sheetgrid-wrap { background: hsl(var(--background)); }
+.sheetgrid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.sheetgrid .sg-cell { border-right: 1px solid hsl(var(--border)); border-bottom: 1px solid hsl(var(--border)); padding: 0 6px; height: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sheetgrid .sg-head { position: sticky; top: 0; z-index: 2; background: hsl(var(--muted) / 0.7); font-weight: 600; font-size: 12px; color: hsl(var(--muted-foreground)); text-align: left; }
+.sheetgrid td.sg-cell { cursor: default; }
+.sheetgrid .is-active { box-shadow: inset 0 0 0 2px hsl(var(--ring)); background: hsl(var(--accent) / 0.25); }
+.sheetgrid .is-invalid { background: hsl(0 84% 60% / 0.12); }
+.sheetgrid .sg-number .sg-value, .sheetgrid .sg-number .sg-input { text-align: right; }
+.sheetgrid .sg-ghost .sg-value { color: hsl(var(--muted-foreground) / 0.55); font-style: italic; }
+.sheetgrid tr.sg-filler .sg-cell { background: hsl(var(--muted) / 0.25); }
+.sheetgrid .sg-handle, .sheetgrid .sg-num, .sheetgrid .sg-sel { position: sticky; z-index: 1; background: hsl(var(--background)); }
+.sheetgrid .sg-handle { left: 0; }
+.sheetgrid .sg-num { left: 44px; }
+.sheetgrid .sg-sel { left: 96px; }
+.sheetgrid .sg-handle-btn { width: 100%; height: 100%; font-size: 11px; color: hsl(var(--muted-foreground)); }
+.sheetgrid .sg-handle-btn:hover { background: hsl(var(--accent)); color: hsl(var(--foreground)); }
+.sheetgrid .sg-input { width: 100%; height: 100%; background: transparent; outline: 2px solid hsl(var(--ring)); outline-offset: -2px; font: inherit; }
+.sheetgrid .sg-resize { position: absolute; top: 0; right: -2px; height: 100%; width: 5px; cursor: col-resize; z-index: 3; }
+.sheetgrid th { position: relative; }* editor placeholder + slash helpers */
 .variable-doc p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
