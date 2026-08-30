@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { parseSpreadsheet } from './formats'
+import { parseSpreadsheet, detectColumnType } from './formats'
 import { createCorruptXlsx, createSampleXlsx } from '../../tests/fixtures/xlsxFactory'
 
 const csvPath = path.join(__dirname, '../../tests/fixtures/sample.csv')
@@ -33,5 +33,19 @@ describe('parseSpreadsheet', () => {
 
   it('rejects unreadable xlsx as a whole', () => {
     expect(() => parseSpreadsheet(readFileSync(createCorruptXlsx()))).toThrow()
+  })
+})
+
+describe('detectColumnType + typed import', () => {
+  it('infers number and date columns from CSV content', () => {
+    const csv = Buffer.from('Name,Amount,When\nAcme,1200,2026-08-23\nGlobex,800,2026-09-01\n')
+    const res = parseSpreadsheet(csv)
+    expect(res.columns.map((c) => c.type)).toEqual(['text', 'number', 'date'])
+  })
+
+  it('defaults to text when mixed', () => {
+    const csv = Buffer.from('V\nabc\n12\n')
+    const res = parseSpreadsheet(csv)
+    expect(res.columns[0].type).toBe('text')
   })
 })

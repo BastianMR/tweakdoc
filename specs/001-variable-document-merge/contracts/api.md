@@ -116,3 +116,9 @@ reviewText(text: string, cfg: { baseUrl: string; apiKey: string }): Promise<
 | { ok: false; error: string }>
 ```
 - Endpoint: `POST {baseUrl}/chat/completions`, modelo configurable futuro (default razonable), respuesta JSON forzada por prompt; timeout 30s; errores de red/clave â†’ `{ ok:false }` sin filtrar la clave.
+
+## Adendum: column types + baseline (grid redesign)
+- Sheet columns incluyen `type: "text" | "number" | "date"`.
+- Import response columns incluyen `type` detectado automáticamente.
+- PUT persiste `type`; sanitización client-side: number rechaza no-numérico (celda marcada inválida), date exige ISO.
+- Inyección por API ignora tipos (valores string) — validación de forma ocurre al editar en UI.

@@ -91,3 +91,9 @@ Dataset.sheet_json ── referencia por columnId desde Document.content_html (l
 2. API rows injection: toda columna referenciada debe existir; un solo desconocido → rechazo total 422 sin writes parciales (FR-015).
 3. Generación: celda vacía en columna usada ⇒ skip + log por fila; chip UNBOUND ⇒ 0 PDFs + 1 log run-level (clarificación Q1).
 4. Filenames: `{sanitized(name)}_{row.num}.pdf` (contracts/naming).
+
+### Adendum (grid redesign)
+- `Column.type: text|number|date` (default `text`; hojas previas migran on-read). Valores siguen siendo strings (`number` sin separadores de miles, `date` ISO `YYYY-MM-DD`).
+- Import auto-detecta tipo por columna (=todas las muestras num�ricas ? number; ISO ? date; si no text). CSV se lee como texto crudo para no convertir fechas.
+- **Baseline 3�3**: si rows<3 o columns<3, el grid muestra fillers/ghosts atenuados (`__fill_N` / `__ghost_N`). Materializaci�n al editar/renombrar/definir tipo; filas toman `next_row_number` secuencial.
+- Operaciones de men� (insert/duplicate/clear/delete en filas y columnas) se componen client-side y persisten por PUT completo.
