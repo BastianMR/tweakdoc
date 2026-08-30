@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useEditor } from '@tiptap/react'
+import { useEffect, useRef, useState } from 'react'
+import { useEditor, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -34,6 +34,7 @@ interface DocumentViewProps {
   initialContent: string
   columns: ColumnRef[]
   settings: StyleSettings
+  onSaved?: (html: string) => void
 }
 
 function liveCssFor(settings: StyleSettings): string {
@@ -51,9 +52,31 @@ export default function DocumentView({
   initialContent,
   columns,
   settings,
+  onSaved,
 }: DocumentViewProps) {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const dirtyRef = useRef(false)
+  const onSavedRef = useRef(onSaved)
+  onSavedRef.current = onSaved
+
+  function persistNow(html: string) {
+    dirtyRef.current = false
+    setSaving('saving')
+    void fetch(`/api/documents/${documentId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contentHtml: html }),
+      keepalive: true,
+    }).then(() => {
+      onSavedRef.current?.(html)
+      setSaving('saved')
+      if (savedTimer.current) clearTimeout(savedTimer.current)
+      savedTimer.current = setTimeout(() => setSaving('idle'), 1500)
+    })
+  }
+  const persistRef = useRef(persistNow)
+  persistRef.current = persistNow
   const columnsRef = useRef(columns)
   columnsRef.current = columns
 
@@ -112,21 +135,14 @@ export default function DocumentView({
     },
     onUpdate: ({ editor }) => {
       editor.commands.refreshVariableFieldBindings(columnsRef.current)
+      dirtyRef.current = true
       if (saveTimer.current) clearTimeout(saveTimer.current)
-      saveTimer.current = setTimeout(() => {
-        setSaving('saving')
-        void fetch(`/api/documents/${documentId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contentHtml: editor.getHTML() }),
-        }).then(() => {
-          setSaving('saved')
-          if (savedTimer.current) clearTimeout(savedTimer.current)
-          savedTimer.current = setTimeout(() => setSaving('idle'), 1500)
-        })
-      }, 600)
+      saveTimer.current = setTimeout(() => persistNow(editor.getHTML()), 600)
     },
   })
+
+  const editorRef = useRef<Editor | null>(null)
+  editorRef.current = editor
 
   const { state: slashState, indexRef: slashIndex, select: slashSelect } = useSlashPopup(editor)
 
@@ -136,9 +152,17 @@ export default function DocumentView({
   }, [editor, columns])
 
   useEffect(() => {
-    return () => {
+    const flush = () => {
       if (saveTimer.current) clearTimeout(saveTimer.current)
+      const ed = editorRef.current
+      if (dirtyRef.current && ed) persistRef.current(ed.getHTML())
+    }
+    const onBeforeUnload = () => flush()
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => {
+      flush()
       if (savedTimer.current) clearTimeout(savedTimer.current)
+      window.removeEventListener('beforeunload', onBeforeUnload)
     }
   }, [])
 

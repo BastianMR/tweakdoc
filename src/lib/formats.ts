@@ -101,7 +101,7 @@ export function parseSpreadsheet(buffer: Buffer): ParseResult {
     return { id: randomId(), num: idx + 1, values }
   })
 
-  const typedColumns = columns.map((col, colIdx) => ({
+  const typedColumns = columns.map((col) => ({
     ...col,
     type: detectColumnType(rows.map((r) => r.values[col.id])),
   }))

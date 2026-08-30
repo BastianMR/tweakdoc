@@ -40,7 +40,8 @@ export function SidebarClient({ docs }: { docs: DocumentListItem[] }) {
   async function deleteDocument(id: string) {
     if (!window.confirm(t.sidebar.deleteConfirm)) return
     await fetch(`/api/documents/${id}`, { method: 'DELETE' })
-    router.refresh()
+    if (pathname === `/documents/${id}`) window.location.assign('/')
+    else router.refresh()
   }
 
   return (

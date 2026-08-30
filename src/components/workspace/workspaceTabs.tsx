@@ -31,6 +31,7 @@ export default function WorkspaceTabs({
   const [tab, setTab] = useState('document')
   const [settings, setSettings] = useState<StyleSettings>(initialSettings)
   const [cols, setCols] = useState<ColumnRef[]>(columns)
+  const [savedContent, setSavedContent] = useState<string | null>(null)
 
   function handleGoToRow(num: number) {
     setTab('table')
@@ -55,9 +56,10 @@ export default function WorkspaceTabs({
       <TabsContent value="document" className="flex-1 overflow-hidden">
         <DocumentView
           documentId={docId}
-          initialContent={initialContent}
+          initialContent={savedContent ?? initialContent}
           columns={cols}
           settings={settings}
+          onSaved={setSavedContent}
         />
       </TabsContent>
       <TabsContent value="table" className="flex-1 overflow-hidden">

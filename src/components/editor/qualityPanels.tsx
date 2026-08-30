@@ -1,9 +1,9 @@
-export type SpellLangState = SpellLang
 'use client'
+
+export type SpellLangState = SpellLang
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { toast } from 'sonner'
 import { createSpellChecker, type SpellLang, type SpellingIssue } from '@/lib/spellcheck'
 import { t } from '@/lib/i18n/en'
 

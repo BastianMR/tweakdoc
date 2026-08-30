@@ -1,6 +1,6 @@
 import { Extension } from '@tiptap/core'
 import type { Editor, Range } from '@tiptap/core'
-import Suggestion, { type SuggestionKeyDownProps, type SuggestionProps } from '@tiptap/suggestion'
+import Suggestion, { type SuggestionProps } from '@tiptap/suggestion'
 import type { ColumnRef } from './variableField'
 
 export interface SlashItem {

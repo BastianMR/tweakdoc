@@ -12,8 +12,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { toast } from 'sonner'
-import { t } from '@/lib/i18n/en'
 import type { ColumnType } from '@/lib/formats'
 import {
   GHOST_PREFIX,
@@ -44,7 +42,7 @@ const TYPE_LABEL: Record<ColumnType, string> = {
   date: 'Date',
 }
 const COLUMN_TYPE_ORDER: ColumnType[] = ['text', 'number', 'date']
-const NAV_COLUMNS_OFFSET = 3
+
 
 interface EffectiveColumn {
   key: string

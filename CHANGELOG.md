@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Editor autosave now flushes pending changes when switching tabs or closing the window, and re-entering the Docs tab restores the latest saved content instead of the page-load snapshot.
+- Deleting the currently open document no longer lands on a 404 page; the app navigates home before the delete refresh.
+
 ### Added
 
 - Multi-document library with persistent sidebar, live search, inline rename and cascading delete.

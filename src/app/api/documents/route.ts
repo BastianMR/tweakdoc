@@ -22,7 +22,6 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null
 
   const name = typeof body?.name === 'string' ? body.name.trim() : ''
-  const formatType = typeof body?.formatType === 'string' ? body.formatType : 'blank'
 
   if (name === '') {
     return NextResponse.json({ error: 'name cannot be empty' }, { status: 400 })

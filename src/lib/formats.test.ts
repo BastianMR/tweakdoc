@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { parseSpreadsheet, detectColumnType } from './formats'
+import { parseSpreadsheet } from './formats'
 import { createCorruptXlsx, createSampleXlsx } from '../../tests/fixtures/xlsxFactory'
 
 const csvPath = path.join(__dirname, '../../tests/fixtures/sample.csv')
