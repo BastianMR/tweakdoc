@@ -24,7 +24,7 @@ describe('documents API', () => {
     expect(created.status).toBe(201)
     expect(created.body.name).toBe('Contract A')
     expect(created.body.datasetId).toBeTruthy()
-    expect(created.body.contentHtml).toContain('<h1>')
+    expect(created.body.contentHtml).toBe('')
 
     const ds = await db.select().from(datasets).where(eq(datasets.id, created.body.datasetId))
     expect(ds).toHaveLength(1)
@@ -42,7 +42,7 @@ describe('documents API', () => {
     )
     expect(emptyName.status).toBe(400)
 
-    const badFormat = await json(
+    const unknownFormat = await json(
       await CREATE(
         new Request('http://x', {
           method: 'POST',
@@ -50,8 +50,11 @@ describe('documents API', () => {
         }),
       ),
     )
-    expect(badFormat.status).toBe(400)
+    expect(unknownFormat.status).toBe(201)
+    expect(unknownFormat.body.formatType).toBe('blank')
+    expect(unknownFormat.body.contentHtml).toBe('')
   })
+
 
   it('lists documents ordered by updatedAt desc', async () => {
     await createDoc('Older')

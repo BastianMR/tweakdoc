@@ -233,3 +233,7 @@ While writing, the user gets offline spelling checks for Spanish and English â€”
 - PDF fidelity goal is faithful reproduction of the editor's rendering; exotic print features (bleed, CMYK, watermarks) are out of scope.
 - AI review is opt-in and disabled-by-default; the app functions fully without it. Credentials are entered manually by the user and never synced or transmitted anywhere except the configured AI endpoint.
 - Platform interface ships in English only for this version; document content may be Spanish or English freely.
+
+## Change note (2026-08-30)
+
+**US7 / FR-016 (structure presets) ANULADAS** por decisión del usuario: todo documento nuevo nace **completamente vacío** (`content_html = ''`). Los skeletons Letter/Official Letter fueron removidos del producto y del código (`presets.ts` eliminado). El campo `format_type` persiste en el modelo por compatibilidad, fijo en `'blank'` para documentos nuevos.

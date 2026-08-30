@@ -3,9 +3,8 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/server/db'
 import { documents } from '@/server/schema'
 import { validateStyleSettings } from '@/lib/styleTokens'
-import type { FormatType } from '@/lib/presets'
 
-const FORMAT_TYPES: FormatType[] = ['blank', 'letter', 'official_letter']
+const FORMAT_TYPES = ['blank', 'letter', 'official_letter']
 
 const now = () => new Date().toISOString()
 
@@ -33,10 +32,10 @@ export async function PATCH(request: Request, { params }: Ctx) {
     updates.name = body.name.trim()
   }
   if (typeof body?.formatType === 'string') {
-    if (!FORMAT_TYPES.includes(body.formatType as FormatType)) {
+    if (!FORMAT_TYPES.includes(body.formatType)) {
       return NextResponse.json({ error: 'invalid formatType' }, { status: 400 })
     }
-    updates.formatType = body.formatType as FormatType
+    updates.formatType = body.formatType as 'blank' | 'letter' | 'official_letter'
   }
   if (typeof body?.contentHtml === 'string') {
     updates.contentHtml = body.contentHtml

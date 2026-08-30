@@ -2,9 +2,7 @@ import { NextResponse } from 'next/server'
 import { desc } from 'drizzle-orm'
 import { db } from '@/server/db'
 import { documents, datasets } from '@/server/schema'
-import { getPresetHtml, type FormatType } from '@/lib/presets'
 
-const FORMAT_TYPES: FormatType[] = ['blank', 'letter', 'official_letter']
 const now = () => new Date().toISOString()
 
 export async function GET(_request: Request) {
@@ -24,27 +22,23 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as Record<string, unknown> | null
 
   const name = typeof body?.name === 'string' ? body.name.trim() : ''
-  const formatType = body?.formatType
+  const formatType = typeof body?.formatType === 'string' ? body.formatType : 'blank'
 
   if (name === '') {
     return NextResponse.json({ error: 'name cannot be empty' }, { status: 400 })
-  }
-  if (typeof formatType !== 'string' || !FORMAT_TYPES.includes(formatType as FormatType)) {
-    return NextResponse.json({ error: 'invalid formatType' }, { status: 400 })
   }
 
   const docId = crypto.randomUUID()
   const datasetId = crypto.randomUUID()
   const timestamp = now()
-  const fmt = formatType as FormatType
 
   const [doc] = await db
     .insert(documents)
     .values({
       id: docId,
       name,
-      formatType: fmt,
-      contentHtml: getPresetHtml(fmt),
+      formatType: 'blank',
+      contentHtml: '',
       createdAt: timestamp,
       updatedAt: timestamp,
     })

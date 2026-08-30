@@ -89,7 +89,7 @@ export default function ExportActions({
 
   if (totalRows === 0) {
     return (
-      <Button size="sm" disabled title={t.grid.nothingToGenerate}>
+      <Button size="sm" className="h-7 px-2 text-xs" disabled title={t.grid.nothingToGenerate}>
         ⬇ Generate
       </Button>
     )
@@ -99,12 +99,13 @@ export default function ExportActions({
     <>
       <Button
         size="sm"
+        className="h-7 px-2 text-xs"
         onClick={() => void runExport(documentId, { rowIds: selectedNums }, onExported)}
         disabled={selectedNums.length === 0}
       >
         ⬇ {t.grid.generateSelected} ({selectedNums.length})
       </Button>
-      <Button size="sm" onClick={() => void runExport(documentId, { all: true }, onExported)}>
+      <Button size="sm" className="h-7 px-2 text-xs" onClick={() => void runExport(documentId, { all: true }, onExported)}>
         ⬇ {t.grid.generateAll}
       </Button>
     </>

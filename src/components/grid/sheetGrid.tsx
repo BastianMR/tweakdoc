@@ -554,12 +554,18 @@ export default function SheetGrid({
       <Input
         autoFocus
         value={v}
-        onChange={(e) => setV(e.target.value)}
-        onBlur={() => onCommit(v.trim())}
+        onFocus={(e) => e.currentTarget.select()}
+        onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') onCommit(v.trim())
+          e.stopPropagation()
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            onCommit(v.trim())
+          }
           if (e.key === 'Escape') onCancel()
         }}
+        onChange={(e) => setV(e.target.value)}
+        onBlur={() => onCommit(v.trim())}
         className="h-6 text-xs"
       />
     )

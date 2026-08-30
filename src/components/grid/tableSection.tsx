@@ -74,7 +74,7 @@ export default function TableSection({
         />
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border">
         <SheetGrid
           sheet={dataset.sheet}
           nextRowNumber={dataset.nextRowNumber}
@@ -86,17 +86,17 @@ export default function TableSection({
         />
         <button
           type="button"
+          title={t.grid.addRow}
           onClick={() => {
             const rows = [...dataset.sheet.rows]
             const values: Record<string, string> = {}
             for (const c of dataset.sheet.columns) values[c.id] = ''
             rows.push({ id: crypto.randomUUID(), num: dataset.nextRowNumber, values })
             onSheet({ columns: dataset.sheet.columns, rows }, dataset.nextRowNumber + 1)
-            toast.success(t.grid.addRow)
           }}
-          className="w-full border-t bg-muted/30 px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-accent"
+          className="absolute bottom-4 right-6 z-10 h-8 w-8 rounded-full bg-primary text-lg leading-none text-primary-foreground shadow-lg hover:bg-primary/90"
         >
-          + {t.grid.addRow}
+          +
         </button>
       </div>
     </div>

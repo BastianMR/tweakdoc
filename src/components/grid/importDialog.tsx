@@ -62,7 +62,7 @@ export default function ImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex h-8 items-center justify-center gap-2 rounded-md border bg-background px-3 text-xs font-medium hover:bg-accent">
+      <DialogTrigger className="inline-flex h-7 items-center justify-center gap-1 rounded-md border bg-background px-2 text-xs font-medium hover:bg-accent">
         ⬆ {t.grid.import}
       </DialogTrigger>
       <DialogContent>

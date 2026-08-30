@@ -65,5 +65,5 @@ export async function PUT(request: Request, { params }: Ctx) {
     .set({ sheetJson: JSON.stringify(sheet), nextRowNumber })
     .where(eq(datasets.id, id))
 
-  return NextResponse.json({ savedAt })
+  return NextResponse.json({ savedAt, nextRowNumber })
 }

@@ -65,7 +65,10 @@ export function useDataset(datasetId: string | null) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sheet, expectedNextRowNumber: nextRowRef.current }),
         })
-        if (res.status === 409) {
+        if (res.ok) {
+          const saved = (await res.json()) as { savedAt: string; nextRowNumber: number }
+          nextRowRef.current = saved.nextRowNumber
+        } else if (res.status === 409) {
           const body = await res.json()
           nextRowRef.current = body.currentNextRowNumber
           toast.warning('Table changed elsewhere — reloading latest data.')
