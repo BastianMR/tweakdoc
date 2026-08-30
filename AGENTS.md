@@ -8,11 +8,12 @@ Local web app that merges a Notion-style editor with a linked spreadsheet to bat
 
 ## Commands
 
-<!-- Replace TODOs with real commands as they become available -->
-
-- Install: `TODO`
-- Test: `TODO`
-- Lint: `TODO`
+- Install: `npm install`
+- Local database: `npm run db:push` (creates `data/tweakdoc.db`)
+- Dev server: `npm run dev` (http://localhost:3000)
+- Test: `npm test` (Vitest)
+- Lint: `npm run lint` (ESLint)
+- Typecheck: `npm run typecheck` (tsc --noEmit)
 
 ## Conventions
 
