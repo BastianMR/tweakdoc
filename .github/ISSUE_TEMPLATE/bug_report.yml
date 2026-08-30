@@ -1,28 +1,29 @@
-name: Bug report
-description: Report something broken
-labels: [bug]
+name: "Reporte de bug"
+description: "Comportamiento incorrecto o inesperado"
+labels: ["bug"]
 body:
   - type: textarea
-    id: description
+    id: que-paso
     attributes:
-      label: Description
-      description: What happened, and what did you expect to happen?
+      label: "Qué pasó"
+      description: "Descripción clara del problema."
     validations:
       required: true
   - type: textarea
-    id: repro
+    id: esperado
     attributes:
-      label: Steps to reproduce
-      placeholder: |
-        1.
-        2.
-        3.
+      label: "Comportamiento esperado"
     validations:
       required: true
   - type: textarea
-    id: environment
+    id: pasos
     attributes:
-      label: Environment
-      description: OS, versions, relevant runtime details
+      label: "Pasos para reproducir"
+    validations:
+      required: false
+  - type: textarea
+    id: contexto
+    attributes:
+      label: "Contexto adicional"
     validations:
       required: false
