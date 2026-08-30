@@ -1,7 +1,7 @@
 # TweakDoc — Project History
 
 Cronología completa de la construcción (sesiones del 23–24 de agosto de 2026).
-Fuente funcional: `specs/001-variable-document-merge/spec.md` · Gestión: `docs/issues/`.
+Fuente funcional: `specs/001-variable-document-merge/spec.md` · Gestión: GitHub issues del repo (backlog en el board *Personal - Dev*).
 
 ## Fase 0 — Idea y clasificación SDD
 - **Idea original**: combinar un editor de texto con una hoja de cálculo; cada fila es una permutación del documento mediante campos personalizados (tipo contratos); variables insertadas por drag-and-drop; al generar el PDF se reemplazan automáticamente.
